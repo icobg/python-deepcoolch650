@@ -1,5 +1,5 @@
-# python-deepcool ch650 DIGITAL
-Python script for DeepCool CH650 DIGITAL case
+# CPU and GPU temperature display for Deepcool Digital ch650 USB-device on Linux
+Python script for DeepCool CH650 DIGITAL case displaying CPU and GPU temperatures and usages.
 
 # First start
 Im not sure but before start the script you may need to have installed and use sensors.
