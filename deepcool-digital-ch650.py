@@ -114,7 +114,6 @@ def get_temperature():
     cputemp = round(psutil.sensors_temperatures()['nct6798'][0].current)
     gputemp = round(psutil.sensors_temperatures()['amdgpu'][0].current)
     # comment line above and uncomment second line if you does not have amdgpu
-    # but you are still using amd gpu
     # gputemp = get_GPUtemp(cards)
 # We always need cpuload and gpuload, this is for the green bars
     gpuload = get_gpu_load(cards)
