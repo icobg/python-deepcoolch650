@@ -2,10 +2,12 @@
 Python script for DeepCool CH650 DIGITAL case displaying CPU and GPU temperatures and usages.
 
 # First start
-Im not sure but before start the script you may need to have installed and use sensors.
-Run sensors-detect and get your sensor name for your CPU.
-Then replace the sensor name nct6798 in line 141 with your
+You need to have installed lm-sensors. Then start sensors-detect as root and follow the steps.
+Load your CPU sensors kernel modules and them verify with command: sensors
+
+After that replace the sensor name nct6798 on line 114 with your
 
 cputemp = round(psutil.sensors_temperatures()['nct6798'][0].current)
 
 You need root to get it work.
+
