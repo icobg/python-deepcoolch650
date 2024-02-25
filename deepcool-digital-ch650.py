@@ -29,30 +29,16 @@ def find_gpu_cards() -> dict:
 '''
 Old function bellow, if gputemp it's not working
 the gpu temperature could be read from temp1_input
-but will need modifications to prepare_data function
 
-def get_stats(cards: dict) -> list:
-    ret_data = [0, 0, 0, 0]
+def get_GPUtemp(cards: dict) -> int:
+    ret_data = 0
     if cards:
         fgpu = cards.get('card0')
 
         with open(fgpu + '/temp1_input', "r", encoding="utf-8") as _gputemp:
-            temp1 = int(_gputemp.read().strip()) // 1000
-            gpu_temp = str(temp1)
-            if len(gpu_temp) == 2:
-                ret_data[2] = int(gpu_temp[0])
-                ret_data[3] = int(gpu_temp[1])
-            elif len(gpu_temp) == 3:
-                ret_data[1] = int(gpu_temp[0])
-                ret_data[2] = int(gpu_temp[1])
-                ret_data[3] = int(gpu_temp[2])
+            ret_data = int(_gputemp.read().strip()) // 1000
 
-        with open(fgpu + '/../../gpu_busy_percent', "r", encoding="utf-8") as _usage:
-            ret_data[0] = int(_usage.read().strip())
-
-        return ret_data
-    else:
-        return ret_data
+    return ret_data
 '''
 
 def get_gpu_load(cards: dict) -> int:
@@ -75,7 +61,7 @@ def get_greenbar_value(input_value):
  3 - CPU first value - one number
  4 - CPU second value - one number
  5 - CPU last value - one number
- 6 - GPU LOAD display load usage - 19 degree in celzii, 35 - farenheit, 76 - GPU USAGE in %,
+ 6 - GPU LOAD display load usage - 19 degree in Celsius, 35 - Fahrenheit, 76 - GPU USAGE in %,
  7 - GPU usage green bar
  8 - the same as CPU number 3 but for GPU - one number
  9 - GPU second value - one number
@@ -95,15 +81,7 @@ def prepare_data(cpuvalue = 0, cpuload = 0, gputemp = 0, gpuload = 0, mode = 'us
         basic_data[1] = 76
         basic_data[6] = 76
         gpu_load = [int(char) for char in str(gpuload)]
-        if len(gpu_data) == 1:
-            basic_data[10] = gpu_load[0]
-        elif len(gpu_data) == 2:
-            basic_data[9] = gpu_load[0]
-            basic_data[10] = gpu_load[1]
-        elif len(gpu_data) == 3:
-            basic_data[8] = gpu_load[0]
-            basic_data[9] = gpu_load[1]
-            basic_data[10] = gpu_load[2]
+        gpu_data = gpu_load
     elif mode == 'start':
         basic_data[1] = 170
         basic_data[6] = 170
@@ -120,17 +98,12 @@ def prepare_data(cpuvalue = 0, cpuload = 0, gputemp = 0, gpuload = 0, mode = 'us
         basic_data[3] = cpu_data[0]
         basic_data[4] = cpu_data[1]
         basic_data[5] = cpu_data[2]
-    elif len(cpu_data) == 4:
-        basic_data[3] = cpu_data[0]
-        basic_data[4] = cpu_data[1]
-        basic_data[5] = cpu_data[2]
-        basic_data[6] = cpu_data[3]
-    if len(gpu_data) == 1 and mode == 'temp':
+    if len(gpu_data) == 1:
         basic_data[10] = gpu_data[0]
-    elif len(gpu_data) == 2 and mode == 'temp':
+    elif len(gpu_data) == 2:
         basic_data[9] = gpu_data[0]
         basic_data[10] = gpu_data[1]
-    elif len(gpu_data) == 3 and mode == 'temp':
+    elif len(gpu_data) == 3:
         basic_data[8] = gpu_data[0]
         basic_data[9] = gpu_data[1]
         basic_data[10] = gpu_data[2]
@@ -140,6 +113,9 @@ def prepare_data(cpuvalue = 0, cpuload = 0, gputemp = 0, gpuload = 0, mode = 'us
 def get_temperature():
     cputemp = round(psutil.sensors_temperatures()['nct6798'][0].current)
     gputemp = round(psutil.sensors_temperatures()['amdgpu'][0].current)
+    # comment line above and uncomment second line if you does not have amdgpu
+    # but you are still using amd gpu
+    # gputemp = get_GPUtemp(cards)
 # We always need cpuload and gpuload, this is for the green bars
     gpuload = get_gpu_load(cards)
     cpuload = round(psutil.cpu_percent())
